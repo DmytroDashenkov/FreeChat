@@ -54,7 +54,7 @@ public class FreeChatMainView extends EditText {
 
     @Override
     protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
-        if (shouldHandleChange) {
+        if (shouldHandleChange && textChangedListener != null) {
             textChangedListener.onTextChanged(
                     new ChangedText((String) text.subSequence(start, start + lengthAfter),
                             lengthBefore, start));

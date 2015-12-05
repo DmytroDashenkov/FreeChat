@@ -3,7 +3,9 @@ package com.mamay.freechat.model;
 import com.mamay.freechat.App;
 import com.mamay.freechat.view.FreeChatMainView;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Model of the text change for networking.
@@ -92,5 +94,20 @@ public class ChangedText {
     public ChangedText setDate(Date date) {
         this.date = date;
         return this;
+    }
+
+    /**
+     * Converts the instance to JSON String.
+     *
+     * @return JSON representation of the object.
+     */
+    @Override
+    public String toString() {
+        return "{'text': '" + text + '\''
+                + ", 'startIndex': " + startIndex
+                + ", 'lengthBeforeChange': " + lengthBeforeChange
+                + ", 'author': '" + author + '\''
+                + ", 'date': '" + new SimpleDateFormat("hh:mm:ss dd:MM:yyyy", Locale.US).format(date)
+                + "'}";
     }
 }
