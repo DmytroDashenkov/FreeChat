@@ -45,7 +45,7 @@ public class FreeChatMainView extends EditText {
     protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
         textChangedListener.onTextChanged(
                 new ChangedText((String) text.subSequence(start, start + lengthAfter),
-                        lengthBefore));
+                        lengthBefore, start));
     }
 
     public void setTextChangedListener(TextChangedListener textChangedListener) {
@@ -62,10 +62,24 @@ public class FreeChatMainView extends EditText {
 
         private String text;
         private int lengthBefore;
+        private int startIndex;
 
-        public ChangedText(String text, int lengthBefore) {
+        public ChangedText(String text, int lengthBefore, int startIndex) {
             this.text = text;
             this.lengthBefore = lengthBefore;
+            this.startIndex = startIndex;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public int getLengthBefore() {
+            return lengthBefore;
+        }
+
+        public int getStartIndex() {
+            return startIndex;
         }
     }
 }
