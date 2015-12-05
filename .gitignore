@@ -25,3 +25,7 @@ proguard/
 
 # Log Files
 *.log
+
+# Build files and unit tests
+/android/FreeChat/app/src/androidTest
+/android/FreeChat/app/src/test
