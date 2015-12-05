@@ -1,5 +1,6 @@
 package com.mamay.freechat.model;
 
+import com.mamay.freechat.App;
 import com.mamay.freechat.view.FreeChatMainView;
 
 import java.util.Date;
@@ -18,7 +19,8 @@ public class ChangedText {
         ct.setText(changedText.getText())
                 .setStartIndex(changedText.getStartIndex())
                 .setLengthBeforeChange(changedText.getLengthBefore())
-                .setDate(new Date());
+                .setDate(new Date())
+                .setAuthor(App.getLoginManager().getUsername());
 
         return ct;
     }
