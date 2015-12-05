@@ -14,6 +14,13 @@ import android.widget.EditText;
  */
 public class FreeChatMainView extends EditText {
 
+    /**
+     * Defines if the change is sourced from the view (false) or outside (true).
+     */
+    private boolean shouldHandleChange = true;
+    /**
+     * Listener for the text change event.
+     */
     private TextChangedListener textChangedListener;
 
     public FreeChatMainView(Context context) {
@@ -37,6 +44,9 @@ public class FreeChatMainView extends EditText {
         init();
     }
 
+    /**
+     * Initializes the view.
+     */
     private void init() {
         setSingleLine(false);
         setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
@@ -44,15 +54,29 @@ public class FreeChatMainView extends EditText {
 
     @Override
     protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
-        textChangedListener.onTextChanged(
-                new ChangedText((String) text.subSequence(start, start + lengthAfter),
-                        lengthBefore, start));
+        if (shouldHandleChange) {
+            textChangedListener.onTextChanged(
+                    new ChangedText((String) text.subSequence(start, start + lengthAfter),
+                            lengthBefore, start));
+        } else {
+            shouldHandleChange = true;
+        }
     }
 
+    /**
+     * Default setter for the text change listener.
+     *
+     * @param textChangedListener TextChangedListener instance to be used.
+     */
     public void setTextChangedListener(TextChangedListener textChangedListener) {
         this.textChangedListener = textChangedListener;
     }
 
+    /**
+     * Writes the changed text onto the view.
+     *
+     * @param changedText The content change.
+     */
     @SuppressLint("SetTextI18n")
     public void commitNewText(com.mamay.freechat.model.ChangedText changedText) {
         String text = getText().toString();
@@ -60,6 +84,7 @@ public class FreeChatMainView extends EditText {
                 text.substring(changedText.getStartIndex(),
                         changedText.getStartIndex() + changedText.getLengthBeforeChange()),
                 text.substring(changedText.getStartIndex() + changedText.getLengthBeforeChange() + 1)};
+        shouldHandleChange = false;
         setText(parts[0] + changedText.getText() + parts[1]);
     }
 
@@ -78,26 +103,60 @@ public class FreeChatMainView extends EditText {
 
     }
 
+    /**
+     * Class that represents the view content change, made by user.
+     */
     public class ChangedText {
 
+        /**
+         * Inserted text.
+         */
         private String text;
+        /**
+         * Length of the deleted text.
+         */
         private int lengthBefore;
+        /**
+         * Index of the change start.
+         */
         private int startIndex;
 
+        /**
+         * Default constructor.
+         *
+         * @param text         Inserted text.
+         * @param lengthBefore Length of the deleted text.
+         * @param startIndex   Index of the change start.
+         */
         public ChangedText(String text, int lengthBefore, int startIndex) {
             this.text = text;
             this.lengthBefore = lengthBefore;
             this.startIndex = startIndex;
         }
 
+        /**
+         * Default getter for the inserted text.
+         *
+         * @return Inserted text.
+         */
         public String getText() {
             return text;
         }
 
+        /**
+         * Default getter for the deleted text length.
+         *
+         * @return Deleted text length.
+         */
         public int getLengthBefore() {
             return lengthBefore;
         }
 
+        /**
+         * Default getter for the start index.
+         *
+         * @return Start index.
+         */
         public int getStartIndex() {
             return startIndex;
         }
