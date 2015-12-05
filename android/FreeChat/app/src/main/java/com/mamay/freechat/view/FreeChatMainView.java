@@ -1,5 +1,6 @@
 package com.mamay.freechat.view;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
@@ -52,8 +53,27 @@ public class FreeChatMainView extends EditText {
         this.textChangedListener = textChangedListener;
     }
 
+    @SuppressLint("SetTextI18n")
+    public void commitNewText(com.mamay.freechat.model.ChangedText changedText) {
+        String text = getText().toString();
+        String[] parts = {
+                text.substring(changedText.getStartIndex(),
+                        changedText.getStartIndex() + changedText.getLengthBeforeChange()),
+                text.substring(changedText.getStartIndex() + changedText.getLengthBeforeChange() + 1)};
+        setText(parts[0] + changedText.getText() + parts[1]);
+    }
+
+    /**
+     * Interface for watching the text changing.
+     * Helps to find out if the text was changed and how.
+     */
     public interface TextChangedListener {
 
+        /**
+         * Called if the text was changed.
+         *
+         * @param changedText The ChangedText item, that represents the text change.
+         */
         void onTextChanged(ChangedText changedText);
 
     }
