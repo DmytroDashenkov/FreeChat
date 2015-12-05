@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.EditText;
@@ -50,7 +49,6 @@ public class FreeChatMainView extends EditText {
      */
     private void init() {
         setSingleLine(false);
-        setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         setGravity(Gravity.TOP | Gravity.START);
     }
 

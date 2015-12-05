@@ -12,7 +12,8 @@
     <com.mamay.freechat.view.FreeChatMainView
         android:id="@+id/freeview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:inputType="textMultiLine" />
 
 
 </RelativeLayout>
