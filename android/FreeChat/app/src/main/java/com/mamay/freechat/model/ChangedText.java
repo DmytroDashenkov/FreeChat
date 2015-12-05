@@ -5,14 +5,38 @@ import com.mamay.freechat.view.FreeChatMainView;
 
 import java.util.Date;
 
+/**
+ * Model of the text change for networking.
+ */
 public class ChangedText {
 
+    /**
+     * Changed text.
+     */
     private String text;
+    /**
+     * Index of the changed text in the general text.
+     */
     private int startIndex;
+    /**
+     * Deleted text length.
+     */
     private int lengthBeforeChange;
+    /**
+     * Username.
+     */
     private String author;
+    /**
+     * Date and time modified.
+     */
     private Date date;
 
+    /**
+     * Classic way to get an instance from the view's info.
+     *
+     * @param changedText View's info packed in a FreeChatMainView.ChangedText instance.
+     * @return New instance of this class.
+     */
     public static ChangedText fromViewText(FreeChatMainView.ChangedText changedText) {
         ChangedText ct = new ChangedText();
 
