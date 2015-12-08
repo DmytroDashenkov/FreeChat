@@ -7,6 +7,8 @@ public class LoginManager {
 
     private String username = "mamay";
 
+    private com.facebook.login.LoginManager facebook;
+
     public String getUsername() {
         return username;
     }
