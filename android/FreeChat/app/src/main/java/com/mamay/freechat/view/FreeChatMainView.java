@@ -8,6 +8,8 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.EditText;
 
+import com.mamay.freechat.App;
+
 /**
  * Custom EditText that is used for this app.
  * The view knows if it's content was changed and where exactly.
@@ -50,6 +52,8 @@ public class FreeChatMainView extends EditText {
     private void init() {
         setSingleLine(false);
         setGravity(Gravity.TOP | Gravity.START);
+        setTypeface(App.getChatFont());
+        setBackgroundColor(0x0);
     }
 
     @Override
