@@ -3,6 +3,7 @@ package com.mamay.freechat.view;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
@@ -15,29 +16,36 @@ import com.mamay.freechat.R;
 
 public class LoginButtonMergedView extends RelativeLayout {
 
+    private TextView title;
+    private ImageView icon;
+
+    private Context context;
+
     public LoginButtonMergedView(Context context) {
         super(context);
-        init(context);
+        init(context, null);
     }
 
     public LoginButtonMergedView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        init(context, attrs);
     }
 
     public LoginButtonMergedView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
+        init(context, attrs);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public LoginButtonMergedView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init(context);
+        init(context, attrs);
     }
 
-    private void init(Context context) {
+    private void init(Context context, AttributeSet set) {
+        this.context = context;
         mergeViews(context);
+        assignContent(set);
     }
 
     private void mergeViews(Context context) {
@@ -45,7 +53,7 @@ public class LoginButtonMergedView extends RelativeLayout {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         textParams.addRule(ALIGN_PARENT_LEFT);
 
-        TextView title = new TextView(context);
+        title = new TextView(context);
         title.setId(View.generateViewId());
         addView(title, textParams);
 
@@ -53,11 +61,11 @@ public class LoginButtonMergedView extends RelativeLayout {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         imageParams.addRule(RIGHT_OF, title.getId());
 
-        ImageView icon = new ImageView(context);
+        icon = new ImageView(context);
         addView(icon, imageParams);
     }
 
-    private void assignContent(Context context, AttributeSet attrs) {
+    private void assignContent(AttributeSet attrs) {
 
         String title = "";
         int iconLink = 0;
@@ -74,5 +82,13 @@ public class LoginButtonMergedView extends RelativeLayout {
         } finally {
             customAttrs.recycle();
         }
+
+        setContent(title, iconLink, bgColor);
+    }
+
+    private void setContent(String titleText, int iconLink, int bg) {
+        title.setText(titleText);
+        icon.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), iconLink));
+        setBackgroundColor(bg);
     }
 }
