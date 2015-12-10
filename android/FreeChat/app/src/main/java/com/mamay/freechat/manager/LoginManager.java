@@ -12,4 +12,8 @@ public class LoginManager {
     public String getUsername() {
         return username;
     }
+
+    public boolean loginViaFB() {
+        return false;
+    }
 }
