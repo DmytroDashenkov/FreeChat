@@ -9,12 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.mamay.freechat.activity.LoginActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/login_buttons"
-        android:layout_centerHorizontal="true" />
-
     <LinearLayout
         android:id="@+id/login_buttons"
         android:layout_width="match_parent"
@@ -24,7 +18,12 @@
         android:orientation="horizontal"
         android:padding="10dp">
 
-
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/login_buttons"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

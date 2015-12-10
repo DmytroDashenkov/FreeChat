@@ -1,8 +1,7 @@
 <resources>
     <declare-styleable name="FreeChatMainView">
-        <attr name="exampleString" format="string" />
-        <attr name="exampleDimension" format="dimension" />
-        <attr name="exampleColor" format="color" />
-        <attr name="exampleDrawable" format="color|reference" />
+        <attr name="title" format="string" />
+        <attr name="icon" format="integer|reference" />
+        <attr name="backgroundColor" format="color" />
     </declare-styleable>
 </resources>
