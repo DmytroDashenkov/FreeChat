@@ -1,7 +1,7 @@
 <resources>
-    <declare-styleable name="FreeChatMainView">
-        <attr name="title" format="string" />
-        <attr name="icon" format="integer|reference" />
-        <attr name="backgroundColor" format="color" />
+    <declare-styleable name="LoginButtonMergedView">
+        <attr name="loginText" format="string|reference" />
+        <attr name="loginIcon" format="integer|reference" />
+        <attr name="loginBackgroundColor" format="color" />
     </declare-styleable>
 </resources>
