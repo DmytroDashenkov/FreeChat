@@ -78,7 +78,7 @@ public class LoginButtonMergedView extends RelativeLayout {
             iconLink = customAttrs.getInt(R.styleable.LoginButtonMergedView_loginIcon,
                     R.mipmap.ic_launcher);
             bgColor = customAttrs.getColor(R.styleable.LoginButtonMergedView_loginBackgroundColor,
-                    0xFFF);
+                    0xCCC);
         } finally {
             customAttrs.recycle();
         }

@@ -16,4 +16,8 @@ public class LoginManager {
     public boolean loginViaFB() {
         return false;
     }
+
+    public boolean isLoggedIn() {
+        return false;
+    }
 }
