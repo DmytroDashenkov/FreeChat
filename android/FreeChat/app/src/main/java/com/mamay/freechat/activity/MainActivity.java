@@ -14,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.mamay.freechat.App;
 import com.mamay.freechat.R;
 
 public class MainActivity extends AppCompatActivity
@@ -113,9 +112,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void login() {
-        if (App.getLoginManager().isLoggedIn()) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-        }
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+
     }
 }

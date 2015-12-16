@@ -1,7 +1,7 @@
 <resources>
     <declare-styleable name="LoginButtonMergedView">
         <attr name="loginText" format="string|reference" />
-        <attr name="loginIcon" format="integer|reference" />
+        <attr name="loginIcon" format="reference" />
         <attr name="loginBackgroundColor" format="color" />
     </declare-styleable>
 </resources>

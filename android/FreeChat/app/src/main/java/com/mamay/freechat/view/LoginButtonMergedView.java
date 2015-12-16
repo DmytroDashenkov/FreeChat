@@ -3,7 +3,7 @@ package com.mamay.freechat.view;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
@@ -68,15 +68,14 @@ public class LoginButtonMergedView extends RelativeLayout {
     private void assignContent(AttributeSet attrs) {
 
         String title = "";
-        int iconLink = 0;
+        Drawable iconLink = null;
         int bgColor = 0;
 
         TypedArray customAttrs = context.getTheme().obtainStyledAttributes(attrs,
                 R.styleable.LoginButtonMergedView, 0, 0);
         try {
             title = customAttrs.getString(R.styleable.LoginButtonMergedView_loginText);
-            iconLink = customAttrs.getInt(R.styleable.LoginButtonMergedView_loginIcon,
-                    R.mipmap.ic_launcher);
+            iconLink = customAttrs.getDrawable(R.styleable.LoginButtonMergedView_loginIcon);
             bgColor = customAttrs.getColor(R.styleable.LoginButtonMergedView_loginBackgroundColor,
                     0xCCC);
         } finally {
@@ -86,9 +85,9 @@ public class LoginButtonMergedView extends RelativeLayout {
         setContent(title, iconLink, bgColor);
     }
 
-    private void setContent(String titleText, int iconLink, int bg) {
+    private void setContent(String titleText, Drawable iconLink, int bg) {
         title.setText(titleText);
-        icon.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), iconLink));
+        icon.setImageDrawable(iconLink);
         setBackgroundColor(bg);
     }
 }

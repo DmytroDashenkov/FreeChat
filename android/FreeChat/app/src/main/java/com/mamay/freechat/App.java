@@ -27,7 +27,7 @@ public class App extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-        loginManager = new LoginManager();
+        loginManager = new LoginManager(getApplicationContext());
         chatFont = Typeface.createFromAsset(getAssets(), "chatfont.ttf");
     }
 }
