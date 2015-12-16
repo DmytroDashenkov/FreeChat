@@ -62,6 +62,8 @@ public class LoginButtonMergedView extends RelativeLayout {
         imageParams.addRule(RIGHT_OF, title.getId());
 
         icon = new ImageView(context);
+        icon.setMaxWidth(context.getResources()
+                .getDimensionPixelSize(R.dimen.login_button_mereged_view_icon_size));
         addView(icon, imageParams);
     }
 
