@@ -3,6 +3,7 @@ package com.mamay.freechat.view;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -83,6 +84,7 @@ public class LoginButtonMergedView extends RelativeLayout {
 
         title = new TextView(context);
         title.setId(View.generateViewId());
+        title.setTextColor(Color.WHITE);
         addView(title, textParams);
 
         LayoutParams imageParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -122,9 +124,10 @@ public class LoginButtonMergedView extends RelativeLayout {
 
     /**
      * Applies values of the custom attributes to the view.
+     *
      * @param titleText Title of the view.
-     * @param iconLink Icon of the log in way.
-     * @param bg View's background.
+     * @param iconLink  Icon of the log in way.
+     * @param bg        View's background.
      */
     private void setContent(String titleText, Drawable iconLink, int bg) {
         title.setText(titleText);
