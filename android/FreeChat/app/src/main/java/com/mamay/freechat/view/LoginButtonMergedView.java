@@ -14,11 +14,28 @@ import android.widget.TextView;
 
 import com.mamay.freechat.R;
 
+/**
+ * Used to perform a button for the log in action.
+ * Contains of a <code>TextView</code> and an <code>ImageView</code>.
+ * Has custom attributes:
+ * - <code>loginText</code>: title of the button;
+ * - <code>loginIcon</code>: icon on the button;
+ * - <code>loginBackgroundColor</code>: buttons background color.
+ * The view is useful only if all the attributes above are defined in XML.
+ */
 public class LoginButtonMergedView extends RelativeLayout {
 
+    /**
+     * The view that displays the button's title.
+     */
     private TextView title;
+    /**
+     * The view that displays the button's icon.
+     */
     private ImageView icon;
-
+    /**
+     * Application context.
+     */
     private Context context;
 
     public LoginButtonMergedView(Context context) {
@@ -42,12 +59,23 @@ public class LoginButtonMergedView extends RelativeLayout {
         init(context, attrs);
     }
 
+    /**
+     * Initializes the view.
+     *
+     * @param context Application context.
+     * @param set     Set of the view's custom attributes.
+     */
     private void init(Context context, AttributeSet set) {
         this.context = context;
         mergeViews(context);
         assignContent(set);
     }
 
+    /**
+     * Initializes the view's components and set them to the layout.
+     *
+     * @param context Application context.
+     */
     private void mergeViews(Context context) {
         LayoutParams textParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -67,6 +95,11 @@ public class LoginButtonMergedView extends RelativeLayout {
         addView(icon, imageParams);
     }
 
+    /**
+     * Assigns custom attributes to the view.
+     *
+     * @param attrs Attributes to assign.
+     */
     private void assignContent(AttributeSet attrs) {
 
         String title = "";
@@ -87,6 +120,12 @@ public class LoginButtonMergedView extends RelativeLayout {
         setContent(title, iconLink, bgColor);
     }
 
+    /**
+     * Applies values of the custom attributes to the view.
+     * @param titleText Title of the view.
+     * @param iconLink Icon of the log in way.
+     * @param bg View's background.
+     */
     private void setContent(String titleText, Drawable iconLink, int bg) {
         title.setText(titleText);
         icon.setImageDrawable(iconLink);
