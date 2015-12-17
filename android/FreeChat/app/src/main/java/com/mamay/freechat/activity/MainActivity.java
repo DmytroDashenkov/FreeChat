@@ -14,10 +14,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.mamay.freechat.App;
 import com.mamay.freechat.R;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private View container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +35,8 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Snackbar.make(view, "Signed in as " + App.getLoginManager().getUsername(),
+                        Snackbar.LENGTH_SHORT).show();
             }
         });
 
@@ -45,6 +48,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        container = findViewById(R.id.main_container);
     }
 
     @Override
@@ -114,6 +119,10 @@ public class MainActivity extends AppCompatActivity
     private void login() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }
