@@ -20,12 +20,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginManager = App.getLoginManager();
 
         findViewById(R.id.login_via_fb).setOnClickListener(this);
+        findViewById(R.id.login_via_google).setOnClickListener(this);
     }
 
 
     @Override
     public void onClick(View v) {
-        loginManager.loginViaFB(this);
+        switch (v.getId()) {
+            case R.id.login_via_fb:
+                loginManager.loginViaFB(this);
+                break;
+
+            case R.id.login_via_google:
+                loginManager.loginViaGoogle();
+                break;
+        }
+
+
 
     }
 }

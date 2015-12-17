@@ -8,5 +8,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="login_fb">Log in via facebook</string>
+    <string name="login_g_plus">Log in via Google+</string>
     <string name="title_activity_main" translatable="false">Free Chat</string>
 </resources>

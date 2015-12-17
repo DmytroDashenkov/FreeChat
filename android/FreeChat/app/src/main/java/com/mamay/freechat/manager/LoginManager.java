@@ -2,6 +2,7 @@ package com.mamay.freechat.manager;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.AccessToken;
@@ -9,6 +10,9 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.plus.Plus;
 
 import org.json.JSONException;
 
@@ -17,7 +21,8 @@ import java.util.Arrays;
 /**
  * Log in manager, that helps the app to get and store user's identity.
  */
-public class LoginManager {
+public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     /**
      * User name taken from a social network.
@@ -27,6 +32,10 @@ public class LoginManager {
      * Facebook SDK log in helper.
      */
     private com.facebook.login.LoginManager facebook;
+    /**
+     * Google API helper.
+     */
+    private GoogleApiClient google;
     /**
      * Container for storing
      */
@@ -39,7 +48,17 @@ public class LoginManager {
      */
     public LoginManager(Context context) {
         logInState = new LogInState();
+
         FacebookSdk.sdkInitialize(context);
+        facebook = com.facebook.login.LoginManager.getInstance();
+
+        google = new GoogleApiClient.Builder(context)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Plus.API)
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .addScope(Plus.SCOPE_PLUS_PROFILE)
+                .build();
     }
 
     /**
@@ -59,17 +78,27 @@ public class LoginManager {
      * @param activity Activity to be fed to facebook API.
      * @return Was the log in successful.
      */
-    public boolean loginViaFB(Activity activity) {
-        facebook = com.facebook.login.LoginManager.getInstance();
+    public void loginViaFB(Activity activity) {
         facebook.logInWithReadPermissions(activity, Arrays.asList("public_profile"));
 
-        if (isLoggedInViaFB()) {
-            logInState.facebook = true;
-            getFBName();
-            return true;
-        }
+        logInState.facebook = isLoggedInViaFB();
 
-        return false;
+        if (logInState.facebook) {
+            getFBName();
+        }
+    }
+
+    /**
+     * Sign in the user via Google+.
+     */
+    public void loginViaGoogle() {
+        google.connect();
+
+        logInState.gPlus = isLoggedInViaGoogle();
+
+        if (logInState.gPlus) {
+            getGoogleName();
+        }
     }
 
     /**
@@ -79,6 +108,15 @@ public class LoginManager {
      */
     private boolean isLoggedInViaFB() {
         return AccessToken.getCurrentAccessToken() != null;
+    }
+
+    /**
+     * Determines if user is logged in with Google+.
+     *
+     * @return Is user signed in with G+.
+     */
+    private boolean isLoggedInViaGoogle() {
+        return google.isConnected();
     }
 
     /**
@@ -106,6 +144,13 @@ public class LoginManager {
     }
 
     /**
+     * Requests the user name from Google.
+     */
+    private void getGoogleName() {
+        username = Plus.API.getName();
+    }
+
+    /**
      * Is user logged in?
      *
      * @return <code>true</code> if user is logged in via one of social networks.
@@ -113,6 +158,22 @@ public class LoginManager {
     public boolean isLoggedIn() {
         return logInState.isLoggedIn();
     }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e("Google connection error", connectionResult.getErrorMessage());
+    }
+
 
     /**
      * Container class that holds the log in state for each of the social networks.
@@ -123,6 +184,10 @@ public class LoginManager {
          * Is user logged in with facebook.
          */
         boolean facebook;
+        /**
+         * Is user logged in with google.
+         */
+        boolean gPlus;
 
         /**
          * Is user logged in at all.
@@ -130,7 +195,7 @@ public class LoginManager {
          * @return <code>true</code> if user is logged in via one of social networks.
          */
         boolean isLoggedIn() {
-            return facebook;
+            return facebook && gPlus;
         }
     }
 }

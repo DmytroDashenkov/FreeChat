@@ -22,9 +22,19 @@
             android:id="@+id/login_via_fb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             mamay:loginBackgroundColor="@color/com_facebook_blue"
             mamay:loginIcon="@drawable/facebook_logo"
             mamay:loginText="@string/login_fb" />
+
+        <com.mamay.freechat.view.LoginButtonMergedView xmlns:mamay="http://schemas.android.com/apk/res/com.mamay.freechat"
+            android:id="@+id/login_via_google"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            mamay:loginBackgroundColor="@color/google_red"
+            mamay:loginIcon="@drawable/google_plus_logo"
+            mamay:loginText="@string/login_g_plus" />
 
     </LinearLayout>
 
