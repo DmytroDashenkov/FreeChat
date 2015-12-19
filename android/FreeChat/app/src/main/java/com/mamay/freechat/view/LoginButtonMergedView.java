@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -81,19 +80,30 @@ public class LoginButtonMergedView extends RelativeLayout {
         LayoutParams textParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         textParams.addRule(ALIGN_PARENT_LEFT);
+        textParams.addRule(CENTER_VERTICAL);
+        textParams.setMarginStart(context.getResources()
+                .getDimensionPixelOffset(R.dimen.login_button_merged_view_elements_margin));
+        textParams.setMarginEnd(context.getResources()
+                .getDimensionPixelOffset(R.dimen.login_button_merged_view_elements_margin));
 
         title = new TextView(context);
-        title.setId(View.generateViewId());
+        //title.setId(View.generateViewId());
         title.setTextColor(Color.WHITE);
         addView(title, textParams);
 
         LayoutParams imageParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        imageParams.addRule(RIGHT_OF, title.getId());
+        //imageParams.addRule(RIGHT_OF, title.getId());
+        imageParams.addRule(ALIGN_PARENT_END);
+        imageParams.addRule(ALIGN_PARENT_RIGHT);
+        imageParams.setMarginStart(context.getResources()
+                .getDimensionPixelOffset(R.dimen.login_button_merged_view_elements_margin));
+        imageParams.setMarginEnd(context.getResources()
+                .getDimensionPixelOffset(R.dimen.login_button_merged_view_elements_margin));
 
         icon = new ImageView(context);
         icon.setMaxWidth(context.getResources()
-                .getDimensionPixelSize(R.dimen.login_button_mereged_view_icon_size));
+                .getDimensionPixelSize(R.dimen.login_button_merged_view_icon_size));
         addView(icon, imageParams);
     }
 
