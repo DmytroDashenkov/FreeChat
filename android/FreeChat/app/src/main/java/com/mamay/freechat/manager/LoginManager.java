@@ -92,6 +92,7 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
      * Sign in the user via Google+.
      */
     public void loginViaGoogle() {
+        //TODO test
         google.connect();
 
         logInState.gPlus = isLoggedInViaGoogle();
