@@ -171,7 +171,10 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.e("Google connection error", connectionResult.getErrorMessage());
+        String s = (connectionResult.getErrorMessage() == null) ?
+                "Google Play Services are not installed" : connectionResult.getErrorMessage();
+        Log.e("Google connection error", s);
+        Log.e("Google connection error", connectionResult.toString());
     }
 
 
