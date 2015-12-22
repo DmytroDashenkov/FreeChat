@@ -20,7 +20,8 @@ import com.mamay.freechat.R;
  * Has custom attributes:
  * - <code>loginText</code>: title of the button;
  * - <code>loginIcon</code>: icon on the button;
- * - <code>loginBackgroundColor</code>: buttons background color.
+ * - <code>loginBackgroundColor</code>: button's background color;
+ * - <code>loginBackgroundColor</code>: label text color (white by default).
  * The view is useful only if all the attributes above are defined in XML.
  */
 public class LoginButtonMergedView extends RelativeLayout {
@@ -88,7 +89,6 @@ public class LoginButtonMergedView extends RelativeLayout {
 
         title = new TextView(context);
         //title.setId(View.generateViewId());
-        title.setTextColor(Color.WHITE);
         addView(title, textParams);
 
         LayoutParams imageParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -125,6 +125,10 @@ public class LoginButtonMergedView extends RelativeLayout {
             iconLink = customAttrs.getDrawable(R.styleable.LoginButtonMergedView_loginIcon);
             bgColor = customAttrs.getColor(R.styleable.LoginButtonMergedView_loginBackgroundColor,
                     0xCCC);
+            //Set color to label.
+            this.title.setTextColor(customAttrs.getColor(
+                    R.styleable.LoginButtonMergedView_loginTextColor,
+                    Color.WHITE));
         } finally {
             customAttrs.recycle();
         }

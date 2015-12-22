@@ -3,5 +3,6 @@
         <attr name="loginText" format="string|reference" />
         <attr name="loginIcon" format="reference" />
         <attr name="loginBackgroundColor" format="color" />
+        <attr name="loginTextColor" format="color" />
     </declare-styleable>
 </resources>
