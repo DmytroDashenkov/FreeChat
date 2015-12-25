@@ -6,10 +6,14 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.facebook.login.LoginBehavior;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
@@ -22,7 +26,7 @@ import java.util.Arrays;
  * Log in manager, that helps the app to get and store user's identity.
  */
 public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener, FacebookCallback {
 
     /**
      * User name taken from a social network.
@@ -51,11 +55,13 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
 
         FacebookSdk.sdkInitialize(context);
         facebook = com.facebook.login.LoginManager.getInstance();
+        facebook.setLoginBehavior(LoginBehavior.WEB_ONLY);
+        facebook.registerCallback(CallbackManager.Factory.create(), this);
 
         google = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-                .addApi(Plus.API)
+                .addApiIfAvailable(Plus.API)
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .build();
@@ -76,9 +82,9 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
      * Allows to access user's page basic info.
      *
      * @param activity Activity to be fed to facebook API.
-     * @return Was the log in successful.
      */
     public void loginViaFB(Activity activity) {
+        //TODO // FIXME: 25.12.2015 native log in + getting name
         facebook.logInWithReadPermissions(activity, Arrays.asList("public_profile"));
 
         logInState.facebook = isLoggedInViaFB();
@@ -86,13 +92,15 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
         if (logInState.facebook) {
             getFBName();
         }
+        Log.w("login FB", "trying to log in");
+        Log.w("lon in state", logInState.toString());
     }
 
     /**
      * Sign in the user via Google+.
      */
     public void loginViaGoogle() {
-        //TODO test
+        //TODO // FIXME: 25.12.2015 log in with google
         google.connect();
 
         logInState.gPlus = isLoggedInViaGoogle();
@@ -138,6 +146,8 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
                             username = response.getJSONObject().getString("user-name");
                         } catch (JSONException e) {
                             Log.wtf("JSONException", e.getMessage());
+                        } finally {
+                            Log.w("facebook name", "now username is " + username);
                         }
                     }
                 }
@@ -178,6 +188,23 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
         Log.e("Google connection error", connectionResult.toString());
     }
 
+    @Override
+    public void onSuccess(Object o) {
+        Log.w("log in", "Facebook log in succeed");
+        Log.w("fb", o.toString());
+        getFBName();
+    }
+
+    @Override
+    public void onCancel() {
+        Log.w("log in", "Facebook log in canceled");
+    }
+
+    @Override
+    public void onError(FacebookException error) {
+        Log.e("log in failed", error.getMessage());
+    }
+
 
     /**
      * Container class that holds the log in state for each of the social networks.
@@ -200,6 +227,14 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
          */
         boolean isLoggedIn() {
             return facebook && gPlus;
+        }
+
+        @Override
+        public String toString() {
+            return "LogInState{" +
+                    "facebook=" + facebook +
+                    ", gPlus=" + gPlus +
+                    '}';
         }
     }
 }
