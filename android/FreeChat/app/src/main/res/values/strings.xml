@@ -10,4 +10,9 @@
     <string name="login_fb">Log in via facebook</string>
     <string name="login_g_plus">Log in via Google</string>
     <string name="title_activity_main" translatable="false">Free Chat</string>
+
+    <string name="my_chats">My chats</string>
+    <string name="recent">Recent chats</string>
+    <string name="popular">Popular chats</string>
+    <string name="add">Create new chat</string>
 </resources>
