@@ -38,8 +38,9 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
      * Facebook SDK log in helper.
      */
     private com.facebook.login.LoginManager facebook;
-
-    //TODO javadoc
+    /**
+     * Facebook callback manager, the connector for Facebook SDK and application.
+     */
     private CallbackManager fbCallback;
     /**
      * Google API helper.
@@ -113,7 +114,6 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
      * @param activity Activity to be fed to facebook API.
      */
     public void loginViaFB(Activity activity) {
-        //TODO // FIXME: 25.12.2015 native log in + getting name
         facebook.logInWithReadPermissions(activity, Arrays.asList(Const.facebook.PUBLIC_PROFILE));
 
         logInState.facebook = isLoggedInViaFB();
@@ -174,6 +174,13 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
                 });
     }
 
+    /**
+     * Requests data from facebook server.
+     *
+     * @param url      Request URL.
+     * @param request  Value to search for.
+     * @param listener Callback for data saving.
+     */
     private void executeFBRequest(String url, final String request, final FacebookOnRequestListener listener) {
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
