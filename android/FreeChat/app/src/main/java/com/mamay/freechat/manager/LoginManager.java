@@ -97,6 +97,14 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
         return username;
     }
 
+    /**
+     * Username setter for private access.
+     *
+     * @param username User name value.
+     */
+    private void setUsername(String username) {
+        this.username = username;
+    }
 
     /**
      * Loges user in via facebook with permission 'public_profile'.
@@ -106,7 +114,7 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
      */
     public void loginViaFB(Activity activity) {
         //TODO // FIXME: 25.12.2015 native log in + getting name
-        facebook.logInWithReadPermissions(activity, Arrays.asList(Const.facbook.PUBLIC_PROFILE));
+        facebook.logInWithReadPermissions(activity, Arrays.asList(Const.facebook.PUBLIC_PROFILE));
 
         logInState.facebook = isLoggedInViaFB();
 
@@ -155,9 +163,21 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
      * Requests the user name from facebook.
      */
     private void getFBName() {
+        executeFBRequest(
+                AccessToken.getCurrentAccessToken().getUserId(),
+                Const.facebook.NAME,
+                new FacebookOnRequestListener() {
+                    @Override
+                    public void onRequest(Object result) {
+                        username = (String) result;
+                    }
+                });
+    }
+
+    private void executeFBRequest(String url, final String request, final FacebookOnRequestListener listener) {
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
-                "/" + AccessToken.getCurrentAccessToken().getUserId(),
+                "/" + url,
                 null,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
@@ -169,7 +189,7 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
                         } else {
                             try {
                                 if (response.getJSONObject() != null) {
-                                    username = response.getJSONObject().getString(Const.facbook.NAME);
+                                    listener.onRequest(response.getJSONObject().getString(request));
                                 }
                             } catch (JSONException e) {
                                 Log.wtf("JSONException", e.getMessage());
@@ -214,6 +234,10 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
                 "Google Play Services are not installed" : connectionResult.getErrorMessage();
         Log.e("Google connection error", s);
         Log.e("Google connection error", connectionResult.toString());
+    }
+
+    private interface FacebookOnRequestListener {
+        void onRequest(Object result);
     }
 
     /**
