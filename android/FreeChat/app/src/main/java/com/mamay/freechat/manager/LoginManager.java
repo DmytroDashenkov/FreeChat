@@ -2,6 +2,7 @@ package com.mamay.freechat.manager;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -13,10 +14,11 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
-import com.facebook.login.LoginBehavior;
+import com.facebook.login.LoginResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
+import com.mamay.freechat.Const;
 
 import org.json.JSONException;
 
@@ -26,7 +28,7 @@ import java.util.Arrays;
  * Log in manager, that helps the app to get and store user's identity.
  */
 public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, FacebookCallback {
+        GoogleApiClient.OnConnectionFailedListener {
 
     /**
      * User name taken from a social network.
@@ -36,6 +38,9 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
      * Facebook SDK log in helper.
      */
     private com.facebook.login.LoginManager facebook;
+
+    //TODO javadoc
+    private CallbackManager fbCallback;
     /**
      * Google API helper.
      */
@@ -55,8 +60,24 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
 
         FacebookSdk.sdkInitialize(context);
         facebook = com.facebook.login.LoginManager.getInstance();
-        facebook.setLoginBehavior(LoginBehavior.WEB_ONLY);
-        facebook.registerCallback(CallbackManager.Factory.create(), this);
+        fbCallback = CallbackManager.Factory.create();
+        facebook.registerCallback(fbCallback, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.w("log in", "Facebook log in succeed");
+                Log.w("fb login result", loginResult.toString());
+            }
+
+            @Override
+            public void onCancel() {
+                Log.w("log in", "Facebook log in canceled");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.e("log in failed", error.getMessage());
+            }
+        });
 
         google = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
@@ -85,15 +106,17 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
      */
     public void loginViaFB(Activity activity) {
         //TODO // FIXME: 25.12.2015 native log in + getting name
-        facebook.logInWithReadPermissions(activity, Arrays.asList("public_profile"));
+        facebook.logInWithReadPermissions(activity, Arrays.asList(Const.facbook.PUBLIC_PROFILE));
 
         logInState.facebook = isLoggedInViaFB();
 
         if (logInState.facebook) {
             getFBName();
         }
-        Log.w("login FB", "trying to log in");
-        Log.w("lon in state", logInState.toString());
+    }
+
+    public void onFacebookActivityReturnsResult(int requestCode, int resultCode, Intent data) {
+        fbCallback.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
@@ -134,20 +157,25 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
     private void getFBName() {
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
-                "/{user-name}",
+                "/" + AccessToken.getCurrentAccessToken().getUserId(),
                 null,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
                         if (response.getError() != null) {
-                            Log.e("Facebook API call error", response.getError().getErrorMessage());
-                        }
-                        try {
-                            username = response.getJSONObject().getString("user-name");
-                        } catch (JSONException e) {
-                            Log.wtf("JSONException", e.getMessage());
-                        } finally {
-                            Log.w("facebook name", "now username is " + username);
+                            Log.e("Facebook API call error",
+                                    response.getError().getErrorType()
+                                            + response.getError().getErrorMessage());
+                        } else {
+                            try {
+                                if (response.getJSONObject() != null) {
+                                    username = response.getJSONObject().getString(Const.facbook.NAME);
+                                }
+                            } catch (JSONException e) {
+                                Log.wtf("JSONException", e.getMessage());
+                            } finally {
+                                Log.w("facebook name", "now username is " + username);
+                            }
                         }
                     }
                 }
@@ -187,24 +215,6 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
         Log.e("Google connection error", s);
         Log.e("Google connection error", connectionResult.toString());
     }
-
-    @Override
-    public void onSuccess(Object o) {
-        Log.w("log in", "Facebook log in succeed");
-        Log.w("fb", o.toString());
-        getFBName();
-    }
-
-    @Override
-    public void onCancel() {
-        Log.w("log in", "Facebook log in canceled");
-    }
-
-    @Override
-    public void onError(FacebookException error) {
-        Log.e("log in failed", error.getMessage());
-    }
-
 
     /**
      * Container class that holds the log in state for each of the social networks.
