@@ -18,6 +18,7 @@ import com.facebook.login.LoginResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
+import com.mamay.freechat.App;
 import com.mamay.freechat.Const;
 
 import org.json.JSONException;
@@ -33,7 +34,7 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
     /**
      * User name taken from a social network.
      */
-    private String username = "username";
+    private String username = Const.login.DEFAULT_USERNAME;
     /**
      * Facebook SDK log in helper.
      */
@@ -104,7 +105,11 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
      * @param username User name value.
      */
     private void setUsername(String username) {
+        if (username == null || username.length() == 0) {
+            username = Const.login.DEFAULT_USERNAME;
+        }
         this.username = username;
+        App.getSharedPreferencesManager().write(Const.sharedprefs.USERNAME, username);
     }
 
     /**
@@ -169,7 +174,7 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
                 new FacebookOnRequestListener() {
                     @Override
                     public void onRequest(Object result) {
-                        username = (String) result;
+                        setUsername((String) result);
                     }
                 });
     }
@@ -213,7 +218,7 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
      * Requests the user name from Google.
      */
     private void getGoogleName() {
-        username = Plus.API.getName();
+        setUsername(Plus.API.getName());
     }
 
     /**

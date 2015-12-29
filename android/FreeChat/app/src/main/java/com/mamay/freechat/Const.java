@@ -5,6 +5,10 @@ package com.mamay.freechat;
  */
 public class Const {
 
+    public static class login {
+        public static final String DEFAULT_USERNAME = "username";
+    }
+
     public static class facebook {
         public static final String NAME = "name";
         public static final String PUBLIC_PROFILE = "public_profile";
