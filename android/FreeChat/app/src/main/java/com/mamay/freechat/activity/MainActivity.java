@@ -58,8 +58,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         container = findViewById(R.id.main_container);
-
-        keyHash();
     }
 
     @Override

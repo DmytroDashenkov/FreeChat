@@ -2,34 +2,18 @@ package com.mamay.freechat.manager;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
-import com.facebook.login.LoginResult;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.mamay.freechat.App;
 import com.mamay.freechat.Const;
-
-import org.json.JSONException;
-
-import java.util.Arrays;
+import com.mamay.freechat.auth.FacebookLoginer;
+import com.mamay.freechat.auth.GoogleLoginer;
+import com.mamay.freechat.auth.Loginer;
+import com.mamay.freechat.auth.UsernameHolder;
 
 /**
  * Log in manager, that helps the app to get and store user's identity.
  */
-public class LoginManager implements GoogleApiClient.OnConnectionFailedListener {
+public class LoginManager implements UsernameHolder {
 
     /**
      * User name taken from a social network.
@@ -38,23 +22,15 @@ public class LoginManager implements GoogleApiClient.OnConnectionFailedListener 
     /**
      * Facebook SDK log in helper.
      */
-    private com.facebook.login.LoginManager facebook;
-    /**
-     * Facebook callback manager, the connector for Facebook SDK and application.
-     */
-    private CallbackManager fbCallback;
+    private Loginer facebook;
     /**
      * Google API helper.
      */
-    private GoogleApiClient google;
+    private Loginer google;
     /**
      * Container for storing
      */
     private LogInState logInState;
-    /**
-     * <code>Activity</code> for result.
-     */
-    private Activity loginActivity;
 
     /**
      * Default class constructor.
@@ -63,38 +39,8 @@ public class LoginManager implements GoogleApiClient.OnConnectionFailedListener 
      */
     public LoginManager(Activity activity) {
         logInState = new LogInState();
-
-        loginActivity = activity;
-
-        FacebookSdk.sdkInitialize(activity.getApplicationContext());
-        facebook = com.facebook.login.LoginManager.getInstance();
-        fbCallback = CallbackManager.Factory.create();
-        facebook.registerCallback(fbCallback, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.w("log in", "Facebook log in succeed");
-                Log.w("fb login result", loginResult.toString());
-            }
-
-            @Override
-            public void onCancel() {
-                Log.w("log in", "Facebook log in canceled");
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                Log.e("log in failed", error.getMessage());
-            }
-        });
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder()
-                .requestEmail()
-                .build();
-
-        google = new GoogleApiClient.Builder(activity.getApplicationContext())
-                .enableAutoManage((FragmentActivity) loginActivity, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
+        google = new GoogleLoginer(activity, this);
+        facebook = new FacebookLoginer(activity, this);
     }
 
     /**
@@ -106,12 +52,8 @@ public class LoginManager implements GoogleApiClient.OnConnectionFailedListener 
         return username;
     }
 
-    /**
-     * Username setter for private access.
-     *
-     * @param username User name value.
-     */
-    private void setUsername(String username) {
+    @Override
+    public void setUsername(String username) {
         if (username == null || username.length() == 0) {
             username = Const.login.DEFAULT_USERNAME;
         }
@@ -124,37 +66,35 @@ public class LoginManager implements GoogleApiClient.OnConnectionFailedListener 
      * Allows to access user's page basic info.
      */
     public void loginViaFB() {
-        facebook.logInWithReadPermissions(loginActivity, Arrays.asList(Const.facebook.PUBLIC_PROFILE));
+        facebook.login();
 
         logInState.facebook = isLoggedInViaFB();
 
         if (logInState.facebook) {
-            getFBName();
+            ((FacebookLoginer) facebook).getFBName();
         }
     }
 
-    public void onFacebookActivityReturnsResult(int requestCode, int resultCode, Intent data) {
-        fbCallback.onActivityResult(requestCode, resultCode, data);
-    }
-
+    /**
+     * Activity result to be handled by google.
+     */
     public void onGoogleActivityReturnsResult(Intent data) {
-        GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-        try {
-            String s = result.getSignInAccount().getDisplayName();
-            setUsername(s);
-            Log.w("google name", s);
-        } catch (Throwable t) {
-            Log.e("error", t.getMessage());
-        }
+        google.onActivityResult(0, 0, data);
+    }
 
+    /**
+     * Activity result to be handled by facebook.
+     */
+    public void onFacebookActivityReturnsResult(int requestCode, int resultCode, Intent data) {
+        facebook.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
      * Sign in the user via Google.
      */
     public void loginViaGoogle() {
-        Intent intent = Auth.GoogleSignInApi.getSignInIntent(google);
-        loginActivity.startActivityForResult(intent, Const.login.SIGN_IN_WITH_GOOGLE);
+        google.login();
+        logInState.google = google.isLoggedIn();
     }
 
     /**
@@ -163,7 +103,7 @@ public class LoginManager implements GoogleApiClient.OnConnectionFailedListener 
      * @return Is there an access token for facebook.
      */
     private boolean isLoggedInViaFB() {
-        return AccessToken.getCurrentAccessToken() != null;
+        return facebook.isLoggedIn();
     }
 
     /**
@@ -172,57 +112,7 @@ public class LoginManager implements GoogleApiClient.OnConnectionFailedListener 
      * @return Is user signed in with Google.
      */
     private boolean isLoggedInViaGoogle() {
-        return google.isConnected();
-    }
-
-    /**
-     * Requests the user name from facebook.
-     */
-    private void getFBName() {
-        executeFBRequest(
-                AccessToken.getCurrentAccessToken().getUserId(),
-                Const.facebook.NAME,
-                new FacebookOnRequestListener() {
-                    @Override
-                    public void onRequest(Object result) {
-                        setUsername((String) result);
-                    }
-                });
-    }
-
-    /**
-     * Requests data from facebook server.
-     *
-     * @param url      Request URL.
-     * @param request  Value to search for.
-     * @param listener Callback for data saving.
-     */
-    private void executeFBRequest(String url, final String request, final FacebookOnRequestListener listener) {
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/" + url,
-                null,
-                HttpMethod.GET,
-                new GraphRequest.Callback() {
-                    public void onCompleted(GraphResponse response) {
-                        if (response.getError() != null) {
-                            Log.e("Facebook API call error",
-                                    response.getError().getErrorType()
-                                            + response.getError().getErrorMessage());
-                        } else {
-                            try {
-                                if (response.getJSONObject() != null) {
-                                    listener.onRequest(response.getJSONObject().getString(request));
-                                }
-                            } catch (JSONException e) {
-                                Log.wtf("JSONException", e.getMessage());
-                            } finally {
-                                Log.w("facebook name", "now username is " + username);
-                            }
-                        }
-                    }
-                }
-        ).executeAsync();
+        return google.isLoggedIn();
     }
 
     /**
@@ -232,18 +122,6 @@ public class LoginManager implements GoogleApiClient.OnConnectionFailedListener 
      */
     public boolean isLoggedIn() {
         return logInState.isLoggedIn();
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        String s = (connectionResult.getErrorMessage() == null) ?
-                "Google Play Services are not installed" : connectionResult.getErrorMessage();
-        Log.e("Google connection error", s);
-        Log.e("Google connection error", connectionResult.toString());
-    }
-
-    private interface FacebookOnRequestListener {
-        void onRequest(Object result);
     }
 
     /**
