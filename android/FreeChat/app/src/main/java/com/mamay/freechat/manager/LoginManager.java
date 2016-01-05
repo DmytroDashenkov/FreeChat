@@ -1,9 +1,8 @@
 package com.mamay.freechat.manager;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.facebook.AccessToken;
@@ -15,9 +14,11 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.plus.Plus;
 import com.mamay.freechat.App;
 import com.mamay.freechat.Const;
 
@@ -28,8 +29,7 @@ import java.util.Arrays;
 /**
  * Log in manager, that helps the app to get and store user's identity.
  */
-public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+public class LoginManager implements GoogleApiClient.OnConnectionFailedListener {
 
     /**
      * User name taken from a social network.
@@ -51,16 +51,22 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
      * Container for storing
      */
     private LogInState logInState;
+    /**
+     * <code>Activity</code> for result.
+     */
+    private Activity loginActivity;
 
     /**
      * Default class constructor.
      *
-     * @param context Application context.
+     * @param activity Login activity reference for getting it's result.
      */
-    public LoginManager(Context context) {
+    public LoginManager(Activity activity) {
         logInState = new LogInState();
 
-        FacebookSdk.sdkInitialize(context);
+        loginActivity = activity;
+
+        FacebookSdk.sdkInitialize(activity.getApplicationContext());
         facebook = com.facebook.login.LoginManager.getInstance();
         fbCallback = CallbackManager.Factory.create();
         facebook.registerCallback(fbCallback, new FacebookCallback<LoginResult>() {
@@ -81,12 +87,13 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
             }
         });
 
-        google = new GoogleApiClient.Builder(context)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApiIfAvailable(Plus.API)
-                .addScope(Plus.SCOPE_PLUS_LOGIN)
-                .addScope(Plus.SCOPE_PLUS_PROFILE)
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder()
+                .requestEmail()
+                .build();
+
+        google = new GoogleApiClient.Builder(activity.getApplicationContext())
+                .enableAutoManage((FragmentActivity) loginActivity, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
     }
 
@@ -115,11 +122,9 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
     /**
      * Loges user in via facebook with permission 'public_profile'.
      * Allows to access user's page basic info.
-     *
-     * @param activity Activity to be fed to facebook API.
      */
-    public void loginViaFB(Activity activity) {
-        facebook.logInWithReadPermissions(activity, Arrays.asList(Const.facebook.PUBLIC_PROFILE));
+    public void loginViaFB() {
+        facebook.logInWithReadPermissions(loginActivity, Arrays.asList(Const.facebook.PUBLIC_PROFILE));
 
         logInState.facebook = isLoggedInViaFB();
 
@@ -132,18 +137,24 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
         fbCallback.onActivityResult(requestCode, resultCode, data);
     }
 
+    public void onGoogleActivityReturnsResult(Intent data) {
+        GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+        try {
+            String s = result.getSignInAccount().getDisplayName();
+            setUsername(s);
+            Log.w("google name", s);
+        } catch (Throwable t) {
+            Log.e("error", t.getMessage());
+        }
+
+    }
+
     /**
-     * Sign in the user via Google+.
+     * Sign in the user via Google.
      */
     public void loginViaGoogle() {
-        //TODO // FIXME: 25.12.2015 log in with google
-        google.connect();
-
-        logInState.gPlus = isLoggedInViaGoogle();
-
-        if (logInState.gPlus) {
-            getGoogleName();
-        }
+        Intent intent = Auth.GoogleSignInApi.getSignInIntent(google);
+        loginActivity.startActivityForResult(intent, Const.login.SIGN_IN_WITH_GOOGLE);
     }
 
     /**
@@ -156,9 +167,9 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
     }
 
     /**
-     * Determines if user is logged in with Google+.
+     * Determines if user is logged in with Google.
      *
-     * @return Is user signed in with G+.
+     * @return Is user signed in with Google.
      */
     private boolean isLoggedInViaGoogle() {
         return google.isConnected();
@@ -215,29 +226,12 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
     }
 
     /**
-     * Requests the user name from Google.
-     */
-    private void getGoogleName() {
-        setUsername(Plus.API.getName());
-    }
-
-    /**
      * Is user logged in?
      *
      * @return <code>true</code> if user is logged in via one of social networks.
      */
     public boolean isLoggedIn() {
         return logInState.isLoggedIn();
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
     }
 
     @Override
@@ -264,7 +258,7 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
         /**
          * Is user logged in with google.
          */
-        boolean gPlus;
+        boolean google;
 
         /**
          * Is user logged in at all.
@@ -272,14 +266,14 @@ public class LoginManager implements GoogleApiClient.ConnectionCallbacks,
          * @return <code>true</code> if user is logged in via one of social networks.
          */
         boolean isLoggedIn() {
-            return facebook && gPlus;
+            return facebook && google;
         }
 
         @Override
         public String toString() {
             return "LogInState{" +
                     "facebook=" + facebook +
-                    ", gPlus=" + gPlus +
+                    ", google=" + google +
                     '}';
         }
     }

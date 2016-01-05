@@ -36,10 +36,13 @@ public class App extends Application{
         return sharedPreferencesManager;
     }
 
+    public static void initLoginManager(LoginManager loginManager) {
+        App.loginManager = loginManager;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
-        loginManager = new LoginManager(getApplicationContext());
         chatFont = Typeface.createFromAsset(getAssets(), "chatfont.ttf");
         networkManager = new NetworkManager(this);
         sharedPreferencesManager = new SharedPreferencesManager(this);

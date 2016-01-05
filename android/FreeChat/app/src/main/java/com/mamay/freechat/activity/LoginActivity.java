@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.mamay.freechat.App;
+import com.mamay.freechat.Const;
 import com.mamay.freechat.R;
 import com.mamay.freechat.manager.LoginManager;
 
@@ -18,6 +19,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        App.initLoginManager(new LoginManager(this));
         loginManager = App.getLoginManager();
 
         findViewById(R.id.login_via_fb).setOnClickListener(this);
@@ -29,7 +31,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.login_via_fb:
-                loginManager.loginViaFB(this);
+                loginManager.loginViaFB();
                 break;
 
             case R.id.login_via_google:
@@ -42,6 +44,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        loginManager.onFacebookActivityReturnsResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case Const.login.SIGN_IN_WITH_GOOGLE:
+                loginManager.onGoogleActivityReturnsResult(data);
+                break;
+            default:
+                loginManager.onFacebookActivityReturnsResult(requestCode, resultCode, data);
+        }
+
+        finish();
     }
 }

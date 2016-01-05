@@ -7,6 +7,7 @@ public class Const {
 
     public static class login {
         public static final String DEFAULT_USERNAME = "username";
+        public static final int SIGN_IN_WITH_GOOGLE = 42;
     }
 
     public static class facebook {
