@@ -99,22 +99,19 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.nav_camera:
-                // Handle the camera action
-                break;
-            case R.id.nav_gallery:
+            case R.id.my_chats:
 
                 break;
-            case R.id.nav_slideshow:
+            case R.id.recent_chats:
 
                 break;
-            case R.id.nav_manage:
+            case R.id.popular_chats:
 
                 break;
-            case R.id.nav_share:
+            case R.id.create_new:
 
                 break;
-            case R.id.nav_send:
+            case R.id.settings:
 
                 break;
         }
