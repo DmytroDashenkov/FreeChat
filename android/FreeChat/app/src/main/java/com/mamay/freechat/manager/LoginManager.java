@@ -2,6 +2,7 @@ package com.mamay.freechat.manager;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 
 import com.mamay.freechat.App;
 import com.mamay.freechat.Const;
@@ -128,6 +129,20 @@ public class LoginManager implements UsernameHolder {
      */
     public boolean isLoggedIn() {
         return logInState.isLoggedIn();
+    }
+
+    /**
+     * Log out from all accounts.
+     */
+    public void logout() {
+        if (logInState.google) {
+            google.logout();
+        }
+        if (logInState.facebook) {
+            facebook.logout();
+        }
+
+        Log.w("login state", logInState.toString());
     }
 
     /**

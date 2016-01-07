@@ -2,6 +2,7 @@ package com.mamay.freechat.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -24,6 +25,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         findViewById(R.id.login_via_fb).setOnClickListener(this);
         findViewById(R.id.login_via_google).setOnClickListener(this);
+        findViewById(R.id.logout).setOnClickListener(this);
     }
 
 
@@ -36,6 +38,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.login_via_google:
                 loginManager.loginViaGoogle();
+                break;
+
+            case R.id.logout:
+                loginManager.logout();
+                Snackbar.make(
+                        findViewById(R.id.parent),
+                        "Signed out",
+                        Snackbar.LENGTH_SHORT).show();
                 break;
         }
 
@@ -54,5 +64,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (loginManager.isLoggedIn()) {
+            super.onBackPressed();
+        } else {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(intent);
+        }
     }
 }

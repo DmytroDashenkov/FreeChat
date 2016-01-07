@@ -15,4 +15,7 @@
     <string name="recent">Recent chats</string>
     <string name="popular">Popular chats</string>
     <string name="add">Create new chat</string>
+    <string name="acc">Accounts</string>
+    <string name="sign_in_with">Sign in with:</string>
+    <string name="logout">Log Out</string>
 </resources>

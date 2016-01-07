@@ -96,6 +96,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.settings:
 
                 break;
+            case R.id.add_acc:
+                login();
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
