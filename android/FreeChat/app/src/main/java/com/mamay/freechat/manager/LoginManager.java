@@ -34,11 +34,17 @@ public class LoginManager implements UsernameHolder {
 
     /**
      * Default class constructor.
+     */
+    public LoginManager() {
+        logInState = new LogInState();
+    }
+
+    /**
+     * Default activity setter.
      *
      * @param activity Login activity reference for getting it's result.
      */
-    public LoginManager(Activity activity) {
-        logInState = new LogInState();
+    public void setActivity(Activity activity) {
         google = new GoogleLoginer(activity, this);
         facebook = new FacebookLoginer(activity, this);
     }

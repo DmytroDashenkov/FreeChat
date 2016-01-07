@@ -19,8 +19,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        App.initLoginManager(new LoginManager(this));
         loginManager = App.getLoginManager();
+        loginManager.setActivity(this);
 
         findViewById(R.id.login_via_fb).setOnClickListener(this);
         findViewById(R.id.login_via_google).setOnClickListener(this);

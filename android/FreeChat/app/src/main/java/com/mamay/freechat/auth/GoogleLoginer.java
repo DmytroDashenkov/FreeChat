@@ -44,6 +44,7 @@ public class GoogleLoginer extends Loginer implements GoogleApiClient.OnConnecti
 
     @Override
     public void logout() {
+        //TODO test me
         Auth.GoogleSignInApi.revokeAccess(google);
     }
 
@@ -56,7 +57,7 @@ public class GoogleLoginer extends Loginer implements GoogleApiClient.OnConnecti
     public void onActivityResult(int request, int response, Intent data) {
         GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
         try {
-            String s = result.getSignInAccount().getDisplayName();
+            String s = result.getSignInAccount().getEmail();
             usernameHolder.setUsername(s);
             Log.w("google name", s);
         } catch (Throwable t) {
