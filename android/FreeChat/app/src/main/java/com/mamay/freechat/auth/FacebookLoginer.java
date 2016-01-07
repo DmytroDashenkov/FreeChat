@@ -67,7 +67,7 @@ public class FacebookLoginer extends Loginer {
 
     @Override
     public void logout() {
-
+        facebook.logOut();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class FacebookLoginer extends Loginer {
      * @param request  Value to search for.
      * @param listener Callback for data saving.
      */
-    private void executeFBRequest(String url, final String request, final FacebookOnRequestListener listener) {
+    private void executeFBRequest(String url, final String request, final FacebookOnResponseListener listener) {
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
                 "/" + url,
@@ -102,7 +102,7 @@ public class FacebookLoginer extends Loginer {
                         } else {
                             try {
                                 if (response.getJSONObject() != null) {
-                                    listener.onRequest(response.getJSONObject().getString(request));
+                                    listener.onResponse(response.getJSONObject().getString(request));
                                 }
                             } catch (JSONException e) {
                                 Log.wtf("JSONException", e.getMessage());
@@ -120,15 +120,18 @@ public class FacebookLoginer extends Loginer {
         executeFBRequest(
                 AccessToken.getCurrentAccessToken().getUserId(),
                 Const.facebook.NAME,
-                new FacebookOnRequestListener() {
+                new FacebookOnResponseListener() {
                     @Override
-                    public void onRequest(Object result) {
+                    public void onResponse(Object result) {
                         usernameHolder.setUsername((String) result);
                     }
                 });
     }
 
-    private interface FacebookOnRequestListener {
-        void onRequest(Object result);
+    /**
+     * Helps to handle the facebook response event.
+     */
+    private interface FacebookOnResponseListener {
+        void onResponse(Object result);
     }
 }

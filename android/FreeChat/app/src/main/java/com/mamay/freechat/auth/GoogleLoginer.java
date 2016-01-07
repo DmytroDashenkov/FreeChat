@@ -57,6 +57,7 @@ public class GoogleLoginer extends Loginer implements GoogleApiClient.OnConnecti
     public void onActivityResult(int request, int response, Intent data) {
         GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
         try {
+            //TODO // FIXME: 12.01.2016 getting name from Google
             String s = result.getSignInAccount().getEmail();
             usernameHolder.setUsername(s);
             Log.w("google name", s);
