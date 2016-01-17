@@ -1,4 +1,4 @@
-package com.mamay.freechat.view;
+package com.mamay.freechat.wiget;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;

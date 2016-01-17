@@ -1,7 +1,7 @@
 package com.mamay.freechat.model;
 
 import com.mamay.freechat.App;
-import com.mamay.freechat.view.FreeChatMainView;
+import com.mamay.freechat.wiget.FreeChatMainView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

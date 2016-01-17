@@ -21,6 +21,7 @@ import android.view.View;
 
 import com.mamay.freechat.App;
 import com.mamay.freechat.R;
+import com.mamay.freechat.view.MainView;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -77,7 +78,6 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         switch (id) {
@@ -151,10 +151,5 @@ public class MainActivity extends AppCompatActivity
         } catch (NoSuchAlgorithmException e) {
 
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 }
